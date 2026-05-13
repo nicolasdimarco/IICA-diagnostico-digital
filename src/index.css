@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Fira Sans', system-ui, sans-serif;
+  background-color: #EEEEEE;
+  color: #083E70;
+}
+
+input[type="radio"] {
+  width: 1.4rem;
+  height: 1.4rem;
+  cursor: pointer;
+  accent-color: #009C8F;
+}
+
+*, *::before, *::after { border-radius: 0 !important; }
+
+.tab-button.active {
+  border-bottom: 4px solid #009C8F;
+  color: #083E70;
+  font-weight: bold;
+  background-color: #EEEEEE;
+}
+
+.wizard-pill {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #EEEEEE;
+  color: #083E70;
+  border: 2px solid #e2e8f0;
+}
+.wizard-pill.active { background: #009C8F; color: #fff; border-color: #009C8F; }
+.wizard-pill .num {
+  width: 2rem; height: 2rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #083E70; color: #fff; font-weight: 800;
+}
+.wizard-pill.active .num { background: #fff; color: #009C8F; }

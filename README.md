@@ -8,7 +8,7 @@ Herramienta web de autoevaluación para medir el nivel de madurez digital en org
 
 El instrumento permite recorrer, en una única página, cuatro pasos secuenciales:
 
-1. **Cuestionario y gráfico** — autoevaluación cuantitativa (escala 0–5) sobre cuatro dimensiones:
+1. **Niveles Clave** — autoevaluación cuantitativa (escala 0–5) sobre cuatro dimensiones:
    - Tecnología y Conectividad
    - Procesos y Operaciones
    - Personas y Competencias
@@ -19,45 +19,57 @@ El instrumento permite recorrer, en una única página, cuatro pasos secuenciale
 
 Los resultados se visualizan en un **gráfico radar** (Chart.js) y pueden **descargarse como reporte**.
 
-## Características
+## Stack
 
-- 100% estático: un único archivo HTML, sin backend ni build.
-- Visualización con [Chart.js](https://www.chartjs.org/) vía CDN.
-- Estilos con [Tailwind CSS](https://tailwindcss.com/) vía CDN y tipografía Fira Sans.
-- Paleta institucional IICA (teal `#009C8F`, azul `#083E70`, gris claro `#EEEEEE`).
-- Funciona offline una vez cargada (salvo CDNs).
+- [Vite 5](https://vitejs.dev/) + [React 18](https://react.dev/) (JavaScript).
+- [Tailwind CSS 3](https://tailwindcss.com/) con la paleta institucional IICA (teal `#009C8F`, azul `#083E70`, gris claro `#EEEEEE`).
+- [Chart.js 4](https://www.chartjs.org/) + [react-chartjs-2](https://react-chartjs-2.js.org/) para el radar de madurez y el scatter del embudo de priorización.
+- Tipografía Fira Sans.
 
 ## Uso local
 
-Basta con abrir el archivo en cualquier navegador moderno:
+Requiere Node.js 18+ y npm.
 
 ```bash
-xdg-open "instrumentos diagnostico digital - M1.html"
-```
-
-O servirlo localmente:
-
-```bash
-python3 -m http.server 8000
-# luego abrir http://localhost:8000/
+npm install
+npm run dev        # servidor de desarrollo
+npm run build      # build de producción a dist/
+npm run preview    # previsualiza el build
 ```
 
 ## Despliegue (GitHub Pages)
 
-El sitio se publica automáticamente desde la rama `main` (raíz del repositorio). El archivo `index.html` redirige al instrumento principal.
+El sitio se publica automáticamente en cada push a `main` mediante el workflow
+[`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml), que buildea con
+Vite y publica `dist/` vía `actions/deploy-pages`.
 
 Para activarlo en un fork:
 
 1. Ir a **Settings → Pages**.
-2. En **Source**, seleccionar **Deploy from a branch**.
-3. Elegir rama `main` y carpeta `/ (root)`. Guardar.
+2. En **Source**, seleccionar **GitHub Actions**.
+
+El valor de `base` en `vite.config.js` debe coincidir con el nombre del repositorio.
 
 ## Estructura
 
 ```
 .
-├── index.html                                  # Redirección a la app
-├── instrumentos diagnostico digital - M1.html  # Aplicación (Módulo 1)
+├── index.html                # Entry point de Vite
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+├── package.json
+├── src/
+│   ├── main.jsx              # Bootstrap de React
+│   ├── App.jsx               # Layout + estado de pestañas
+│   ├── index.css             # Tailwind + estilos globales
+│   ├── components/           # Header, TabsNav, RadarMadurez, TablaPromedios
+│   ├── tabs/                 # TabNiveles, TabAnalisis, TabFoda, TabEmbudo
+│   ├── state/                # DiagnosticoContext (estado central)
+│   ├── data/                 # Definición de dimensiones y preguntas
+│   └── utils/                # Generador de reporte .txt
+├── legacy/                   # Versión HTML original (referencia)
+├── .github/workflows/        # CI/CD para GitHub Pages
 ├── LICENSE
 └── README.md
 ```
