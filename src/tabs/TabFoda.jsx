@@ -18,8 +18,6 @@ export default function TabFoda() {
   const { foda, setFodaCampo, cruces, setCruceCampo } = useDiagnostico()
   return (
     <div className="bg-white p-10 shadow-md border border-slate-200 space-y-8 text-base">
-      <h2 className="text-3xl font-bold text-emerald-800 mb-4 underline">Matriz FODA Digital y Cruces</h2>
-
       <div className="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8">
         <h3 className="font-bold text-emerald-800 mb-1">Paso 1: Organice y Paso 2: Analice</h3>
         <p className="text-emerald-900 text-sm">

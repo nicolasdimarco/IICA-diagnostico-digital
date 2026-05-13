@@ -45,32 +45,7 @@ export default function TabAnalisis() {
 
   return (
     <div className="bg-white p-10 shadow-md border border-slate-200">
-      <h2 className="text-3xl font-bold text-emerald-800 mb-4 underline">Gráfico de Resultados y Análisis</h2>
-
-      <div className="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-10 max-w-full">
-        <h3 className="font-bold text-emerald-800 mb-1">Visualizando el Equilibrio</h3>
-        <p className="text-emerald-900 text-sm">
-          El Gráfico de Radar conecta los promedios obtenidos en las cuatro dimensiones. Revise esta imagen de su realidad institucional para responder a la guía de exploración cualitativa en la parte inferior.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16 border-b-2 border-slate-200 pb-12">
-        <div className="flex flex-col items-center">
-          <RadarMadurez promedios={promedios} />
-        </div>
-        <div className="space-y-8">
-          <TablaPromedios promedios={promedios} />
-        </div>
-      </div>
-
       <h3 className="text-2xl font-bold text-emerald-800 mb-4">Guía de Análisis Cualitativo</h3>
-
-      <div className="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8">
-        <h3 className="font-bold text-emerald-800 mb-1">Descubriendo el "Porqué"</h3>
-        <p className="text-emerald-900 text-sm">
-          Los números por sí solos no revelan la historia completa. Esta guía utiliza preguntas abiertas diseñadas para generar un diálogo honesto y descubrir los verdaderos cuellos de botella operativos y los temores del equipo. Lea las preguntas y registre en el "Muro" los testimonios más reveladores.
-        </p>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-8">
