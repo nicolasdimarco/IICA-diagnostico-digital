@@ -40,6 +40,12 @@
         .tab-button.active { border-bottom: 4px solid #009C8F; color: #083E70; font-weight: bold; background-color: #EEEEEE; }
         input[type="radio"] { width: 1.4rem; height: 1.4rem; cursor: pointer; accent-color: #009C8F; }
         *, *::before, *::after { border-radius: 0 !important; }
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        .wizard-pill { flex: 1; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; background: #EEEEEE; color: #083E70; border: 2px solid #e2e8f0; }
+        .wizard-pill.active { background: #009C8F; color: #fff; border-color: #009C8F; }
+        .wizard-pill .num { width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; background: #083E70; color: #fff; font-weight: 800; }
+        .wizard-pill.active .num { background: #fff; color: #009C8F; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased">
@@ -61,7 +67,7 @@
         </header>
 
         <nav class="flex border-b-2 border-slate-200 mb-8 overflow-x-auto bg-white rounded-t-3xl sticky top-0 z-50 shadow-sm">
-            <button onclick="showTab('tab_ques')" id="btn-tab_ques" class="tab-button active px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">1. Cuestionario y gráfico</button>
+            <button onclick="showTab('tab_ques')" id="btn-tab_ques" class="tab-button active px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">1. Niveles</button>
             <button onclick="showTab('tab_muro')" id="btn-tab_muro" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">2. Análisis</button>
             <button onclick="showTab('tab_foda')" id="btn-tab_foda" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">3. FODA</button>
             <button onclick="showTab('tab_embu')" id="btn-tab_embu" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">4. Puntos críticos</button>
@@ -69,13 +75,25 @@
 
         <div id="tab_ques" class="tab-content active space-y-10 animate-in fade-in">
             <div class="bg-white p-10 rounded-3xl shadow-md border border-slate-200">
-                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Cuestionario de Autoevaluación</h2>
-                
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Niveles Clave</h2>
+
                 <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8 rounded-r-xl">
                     <h3 class="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
                     <p class="text-emerald-900 text-sm">Este primer instrumento es una herramienta cuantitativa diseñada para valorar el nivel de madurez en las cuatro dimensiones clave y obtener un puntaje inicial que revele "dónde están" las principales fortalezas y debilidades. Evalúe cada variable utilizando una escala donde 1 significa "Inexistente" (no tenemos esto en absoluto) y 5 significa "Optimizado" (está completamente integrado).</p>
                 </div>
-                
+
+                <div class="flex flex-col sm:flex-row gap-3 mb-10">
+                    <div id="wizard-pill-1" class="wizard-pill active">
+                        <span class="num">1</span>
+                        <span class="font-bold uppercase tracking-wider text-sm">Completar cuestionario</span>
+                    </div>
+                    <div id="wizard-pill-2" class="wizard-pill">
+                        <span class="num">2</span>
+                        <span class="font-bold uppercase tracking-wider text-sm">Ver resultados</span>
+                    </div>
+                </div>
+
+                <div id="wizard-step-1" class="wizard-step active">
                 <form id="radarForm" class="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div class="space-y-8 bg-emerald-50 p-6 rounded-2xl">
                         <h3 class="font-black text-emerald-700 uppercase text-lg border-b border-emerald-200 pb-2">Tecnología y Conectividad</h3>
@@ -256,7 +274,22 @@
                     </div>
                 </form>
 
-                <div class="mt-16 pt-10 border-t-2 border-slate-200">
+                    <div class="mt-10 flex justify-end">
+                        <button type="button" onclick="goToWizardStep(2)" class="bg-emerald-600 text-white px-8 py-4 font-bold hover:bg-emerald-700 transition shadow-md flex items-center gap-2">
+                            Siguiente: Ver resultados
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="wizard-step-2" class="wizard-step">
+                    <div class="mb-8 flex justify-start">
+                        <button type="button" onclick="goToWizardStep(1)" class="bg-white text-emerald-800 border-2 border-emerald-600 px-6 py-3 font-bold hover:bg-emerald-50 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                            Volver al cuestionario
+                        </button>
+                    </div>
+
                     <h3 class="text-3xl font-bold text-emerald-800 mb-6 text-center underline">Resultados del Diagnóstico</h3>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -504,6 +537,16 @@
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Wizard del Tab 1
+        function goToWizardStep(n) {
+            for (let i = 1; i <= 2; i++) {
+                document.getElementById('wizard-step-' + i).classList.toggle('active', i === n);
+                document.getElementById('wizard-pill-' + i).classList.toggle('active', i === n);
+            }
+            if (n === 2 && typeof radar1 !== 'undefined' && radar1) { radar1.update(); }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
