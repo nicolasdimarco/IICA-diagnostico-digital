@@ -41,3 +41,23 @@ input[type="radio"] {
   background: #083E70; color: #fff; font-weight: 800;
 }
 .wizard-pill.active .num { background: #fff; color: #009C8F; }
+
+/* Forma de flecha tipo breadcrumb en pantallas medianas en adelante.
+   Cada pill se recorta con clip-path: la primera apunta a la derecha
+   y la última recibe la punta de la anterior con una muesca a la izquierda. */
+@media (min-width: 640px) {
+  .wizard-pill {
+    border: none;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%, 18px 50%);
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+  .wizard-pill:first-child {
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%);
+    padding-left: 1.25rem;
+  }
+  .wizard-pill:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 18px 50%);
+    padding-right: 1.25rem;
+  }
+}
