@@ -1,6 +1,6 @@
 const TABS = [
   { id: 'niveles', label: '1. Niveles Clave' },
-  { id: 'analisis', label: '2. Análisis' },
+  { id: 'analisis', label: '2. Análisis Cualitativo' },
   { id: 'foda', label: '3. FODA' },
   { id: 'embudo', label: '4. Puntos críticos' },
 ]
