@@ -64,11 +64,12 @@ npm run test:run
 
 Salida esperada: `Tests  29 passed (29)`.
 
-## Despliegue (GitHub Pages)
+## CI / CD
 
-El sitio se publica automáticamente en cada push a `main` mediante el workflow
-[`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml), que buildea con
-Vite y publica `dist/` vía `actions/deploy-pages`.
+Dos workflows en `.github/workflows/`:
+
+- [`ci.yml`](./.github/workflows/ci.yml) — corre en **Pull Requests a `main`** (y manualmente). Ejecuta `npm ci`, `npm run test:run` y `npm run build`. Sirve como gate antes de mergear.
+- [`deploy.yml`](./.github/workflows/deploy.yml) — corre en **push a `main`** (y manualmente). Job `test` → `build` → `deploy`. Si los tests fallan, no se buildea ni se publica.
 
 Para activarlo en un fork:
 
