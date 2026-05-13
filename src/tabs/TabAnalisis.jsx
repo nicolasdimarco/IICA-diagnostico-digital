@@ -31,7 +31,7 @@ function ComboboxBloque({ value, onChange }) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-72 shrink-0">
+    <div ref={containerRef} className="relative w-full">
       <input
         type="text"
         value={query}
@@ -124,22 +124,24 @@ export default function TabAnalisis() {
 
         <div className="bg-white">
           <h3 className="font-black text-slate-800 uppercase mb-6 text-sm tracking-widest">Muro de Hallazgos</h3>
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex flex-col gap-3 mb-8">
             <ComboboxBloque value={bloque} onChange={setBloque} />
-            <input
-              type="text"
-              value={texto}
-              onChange={(e) => setTexto(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && onAgregar()}
-              placeholder="Registre la respuesta de la entrevista..."
-              className="flex-1 border-2 border-slate-200 p-4 text-base outline-emerald-500"
-            />
-            <button
-              type="button"
-              onClick={onAgregar}
-              disabled={!puedeAgregar}
-              className="bg-emerald-600 text-white px-8 py-4 font-bold hover:bg-emerald-700 transition shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed"
-            >Añadir</button>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={texto}
+                onChange={(e) => setTexto(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && onAgregar()}
+                placeholder="Registre la respuesta de la entrevista..."
+                className="flex-1 min-w-0 border-2 border-slate-200 p-4 text-base outline-emerald-500"
+              />
+              <button
+                type="button"
+                onClick={onAgregar}
+                disabled={!puedeAgregar}
+                className="shrink-0 bg-emerald-600 text-white px-6 py-4 font-bold hover:bg-emerald-700 transition shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed"
+              >Añadir</button>
+            </div>
           </div>
           <div className="space-y-6 overflow-y-auto max-h-[500px] pr-2">
             {hallazgosPorBloque.map(([titulo, lista]) => {
