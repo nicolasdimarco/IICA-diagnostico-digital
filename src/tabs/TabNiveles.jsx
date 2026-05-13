@@ -11,24 +11,60 @@ const TONE_H3 = {
   amber: 'text-amber-700 border-amber-200',
   rose: 'text-rose-700 border-rose-200',
 }
+const TONE_FILL = {
+  emerald: 'bg-emerald-600',
+  blue: 'bg-blue-600',
+  amber: 'bg-amber-600',
+  rose: 'bg-rose-600',
+}
 
-function PreguntaRadios({ id, label, valor, onChange }) {
+function PreguntaProgreso({ id, label, valor, onChange, tone }) {
+  const parsed = parseInt(valor, 10)
+  const current = Number.isNaN(parsed) ? -1 : parsed
+  const fill = TONE_FILL[tone] || TONE_FILL.emerald
+
+  const setVal = (v) => onChange(id, String(v))
+  const move = (delta) => {
+    const base = current >= 0 ? current : 0
+    setVal(Math.max(0, Math.min(5, base + delta)))
+  }
+
   return (
     <div>
-      <p className="font-bold text-base mb-2">{label}</p>
-      <div className="flex justify-between max-w-sm px-2">
-        {[0, 1, 2, 3, 4, 5].map((v) => (
-          <label key={v}>
-            {v}{' '}
-            <input
-              type="radio"
-              name={id}
-              value={v}
-              checked={String(valor) === String(v)}
-              onChange={(e) => onChange(id, e.target.value)}
-            />
-          </label>
-        ))}
+      <div className="flex justify-between items-baseline gap-2 mb-2">
+        <p className="font-bold text-base">{label}</p>
+        <span className="font-bold text-sm tabular-nums shrink-0">
+          {current >= 0 ? `${current} / 5` : '— / 5'}
+        </span>
+      </div>
+      <div
+        role="group"
+        aria-label={label}
+        className="flex gap-1 select-none"
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); move(1) }
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); move(-1) }
+          else if (e.key === 'Home') { e.preventDefault(); setVal(0) }
+          else if (e.key === 'End') { e.preventDefault(); setVal(5) }
+          else if (/^[0-5]$/.test(e.key)) { e.preventDefault(); setVal(parseInt(e.key, 10)) }
+        }}
+      >
+        {[0, 1, 2, 3, 4, 5].map((seg) => {
+          const filled = current >= 0 && seg <= current
+          return (
+            <button
+              key={seg}
+              type="button"
+              data-name={id}
+              data-value={seg}
+              aria-pressed={seg === current}
+              onClick={() => setVal(seg)}
+              className={`flex-1 h-9 text-xs font-bold transition border ${
+                filled ? `${fill} text-white border-transparent` : 'bg-white text-slate-500 border-slate-300 hover:bg-slate-100'
+              }`}
+            >{seg}</button>
+          )
+        })}
       </div>
     </div>
   )
@@ -74,7 +110,7 @@ export default function TabNiveles() {
                   <div className="space-y-4">
                     {dim.preguntas.map((p) =>
                       verPregunta(p) ? (
-                        <PreguntaRadios key={p.id} id={p.id} label={p.label} valor={respuestas[p.id]} onChange={setRespuesta} />
+                        <PreguntaProgreso key={p.id} id={p.id} label={p.label} valor={respuestas[p.id]} onChange={setRespuesta} tone={dim.colorTone} />
                       ) : null
                     )}
                   </div>
