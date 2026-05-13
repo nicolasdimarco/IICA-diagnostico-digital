@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Digital - Módulo 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Paleta institucional: teal #009C8F, claro #EEEEEE, azul oscuro #083E70
+        (function() {
+            const teal = '#009C8F';
+            const dark = '#083E70';
+            const light = '#EEEEEE';
+            const palette = {
+                emerald: { 50: light, 100: light, 200: teal, 300: teal, 400: teal, 500: teal, 600: teal, 700: dark, 800: dark, 900: dark },
+                blue:    { 50: light, 100: light, 200: dark, 300: dark, 400: dark, 500: dark, 600: dark, 700: dark, 800: dark, 900: dark },
+                amber:   { 50: light, 100: light, 200: teal, 300: teal, 400: teal, 500: teal, 600: teal, 700: dark, 800: dark, 900: dark },
+                rose:    { 50: light, 100: light, 200: dark, 300: dark, 400: dark, 500: dark, 600: dark, 700: dark, 800: dark, 900: dark },
+                orange:  { 50: light, 100: light, 200: dark, 300: dark, 400: dark, 500: dark, 600: dark, 700: dark, 800: dark, 900: dark },
+                slate:   { 50: light, 100: light, 200: dark, 300: dark, 400: dark, 500: dark, 600: dark, 700: dark, 800: dark, 900: dark }
+            };
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['"Fira Sans"', 'system-ui', 'sans-serif'] },
+                        colors: Object.assign({ brand: { teal, dark, light } }, palette)
+                    }
+                }
+            };
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Fira Sans', system-ui, sans-serif; background-color: #EEEEEE; color: #083E70; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { border-bottom: 4px solid #009C8F; color: #083E70; font-weight: bold; background-color: #EEEEEE; }
+        input[type="radio"] { width: 1.4rem; height: 1.4rem; cursor: pointer; accent-color: #009C8F; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+
+    <div class="max-w-6xl mx-auto p-6 sm:p-10">
+        <header class="bg-emerald-900 text-white rounded-3xl p-8 mb-10 shadow-xl flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-black mb-2">Diagnóstico Digital</h1>
+                <p class="text-emerald-100 text-lg">Módulo 1: Línea Base de Madurez para la Agricultura Familiar</p>
+            </div>
+            <button onclick="descargarReporte()" class="bg-white text-emerald-900 px-6 py-3 rounded-2xl font-bold hover:bg-emerald-50 transition shadow-lg flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12"/>
+                    <path d="m7 10 5 5 5-5"/>
+                    <path d="M5 21h14"/>
+                </svg>
+                Descargar Resultados
+            </button>
+        </header>
+
+        <nav class="flex border-b-2 border-slate-200 mb-8 overflow-x-auto bg-white rounded-t-3xl sticky top-0 z-50 shadow-sm">
+            <button onclick="showTab('tab_ques')" id="btn-tab_ques" class="tab-button active px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">1. Cuestionario y gráfico</button>
+            <button onclick="showTab('tab_muro')" id="btn-tab_muro" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">2. Análisis</button>
+            <button onclick="showTab('tab_foda')" id="btn-tab_foda" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">3. FODA</button>
+            <button onclick="showTab('tab_embu')" id="btn-tab_embu" class="tab-button px-6 py-5 text-base uppercase tracking-widest transition-all whitespace-nowrap">4. Puntos críticos</button>
+        </nav>
+
+        <div id="tab_ques" class="tab-content active space-y-10 animate-in fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-md border border-slate-200">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Cuestionario de Autoevaluación</h2>
+                
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8 rounded-r-xl">
+                    <h3 class="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
+                    <p class="text-emerald-900 text-sm">Este primer instrumento es una herramienta cuantitativa diseñada para valorar el nivel de madurez en las cuatro dimensiones clave y obtener un puntaje inicial que revele "dónde están" las principales fortalezas y debilidades. Evalúe cada variable utilizando una escala donde 1 significa "Inexistente" (no tenemos esto en absoluto) y 5 significa "Optimizado" (está completamente integrado).</p>
+                </div>
+                
+                <form id="radarForm" class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-8 bg-emerald-50 p-6 rounded-2xl">
+                        <h3 class="font-black text-emerald-700 uppercase text-lg border-b border-emerald-200 pb-2">Tecnología y Conectividad</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-bold text-base mb-2">1.1 Equipamiento e Infraestructura Física</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d1_q1" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d1_q1" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d1_q1" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d1_q1" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d1_q1" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d1_q1" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">1.2 Conectividad y Acceso a Internet</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d1_q2" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d1_q2" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d1_q2" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d1_q2" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d1_q2" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d1_q2" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">1.3 Sistemas de Gestión (Software)</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d1_q3" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d1_q3" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d1_q3" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d1_q3" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d1_q3" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d1_q3" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div id="q1_4_container" style="display: none;">
+                                <p class="font-bold text-base mb-2">1.4 Integración de Sistemas</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d1_q4" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d1_q4" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d1_q4" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d1_q4" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d1_q4" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d1_q4" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8 bg-blue-50 p-6 rounded-2xl">
+                        <h3 class="font-black text-blue-700 uppercase text-lg border-b border-blue-200 pb-2">Procesos y Operaciones</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-bold text-base mb-2">2.1 Documentación y Estandarización</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d2_q1" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d2_q1" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d2_q1" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d2_q1" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d2_q1" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d2_q1" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">2.2 Eficiencia y Reducción de Reprocesos</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d2_q2" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d2_q2" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d2_q2" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d2_q2" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d2_q2" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d2_q2" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">2.3 Digitalización de Servicios al Socio</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d2_q3" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d2_q3" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d2_q3" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d2_q3" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d2_q3" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d2_q3" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8 bg-amber-50 p-6 rounded-2xl">
+                        <h3 class="font-black text-amber-700 uppercase text-lg border-b border-amber-200 pb-2">Personas y Competencias</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-bold text-base mb-2">3.1 Habilidades Digitales del Equipo</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d3_q1" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d3_q1" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d3_q1" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d3_q1" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d3_q1" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d3_q1" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">3.2 Distribución del Conocimiento</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d3_q2" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d3_q2" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d3_q2" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d3_q2" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d3_q2" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d3_q2" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">3.3 Adopción Digital en la Base Asociativa</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d3_q3" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d3_q3" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d3_q3" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d3_q3" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d3_q3" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d3_q3" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8 bg-rose-50 p-6 rounded-2xl">
+                        <h3 class="font-black text-rose-700 uppercase text-lg border-b border-rose-200 pb-2">Cultura y Gobernanza</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-bold text-base mb-2">4.1 Apertura al Cambio y Tolerancia al Error</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d4_q1" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d4_q1" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d4_q1" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d4_q1" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d4_q1" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d4_q1" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">4.2 Transparencia y Flujo de Información</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d4_q2" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d4_q2" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d4_q2" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d4_q2" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d4_q2" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d4_q2" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">4.3 Ciberseguridad Básica</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d4_q3" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d4_q3" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d4_q3" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d4_q3" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d4_q3" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d4_q3" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-base mb-2">4.4 Visión Estratégica del Liderazgo</p>
+                                <div class="flex justify-between max-w-sm px-2">
+                                    <label>0 <input type="radio" name="d4_q4" value="0" onchange="updateAll()"></label>
+                                    <label>1 <input type="radio" name="d4_q4" value="1" onchange="updateAll()"></label>
+                                    <label>2 <input type="radio" name="d4_q4" value="2" onchange="updateAll()"></label>
+                                    <label>3 <input type="radio" name="d4_q4" value="3" onchange="updateAll()"></label>
+                                    <label>4 <input type="radio" name="d4_q4" value="4" onchange="updateAll()"></label>
+                                    <label>5 <input type="radio" name="d4_q4" value="5" onchange="updateAll()"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-16 pt-10 border-t-2 border-slate-200">
+                    <h3 class="text-3xl font-bold text-emerald-800 mb-6 text-center underline">Resultados del Diagnóstico</h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="flex flex-col items-center">
+                            <canvas id="madurezRadar1" style="max-height: 450px;"></canvas>
+                        </div>
+                        <div class="space-y-8">
+                            <table class="w-full text-left border-collapse rounded-2xl overflow-hidden shadow-sm">
+                                <thead>
+                                    <tr class="bg-emerald-900 text-white uppercase text-sm tracking-widest">
+                                        <th class="p-5">Dimensión Clave</th>
+                                        <th class="p-5 text-center">Promedio</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-lg font-medium">
+                                    <tr class="bg-emerald-50 text-emerald-900">
+                                        <td class="p-5 border-b border-emerald-100">Tecnología y Conectividad</td>
+                                        <td id="avg-tec1" class="p-5 text-center font-black">1.00</td>
+                                    </tr>
+                                    <tr class="bg-blue-50 text-blue-900">
+                                        <td class="p-5 border-b border-blue-100">Procesos y Operaciones</td>
+                                        <td id="avg-pro1" class="p-5 text-center font-black">1.00</td>
+                                    </tr>
+                                    <tr class="bg-amber-50 text-amber-900">
+                                        <td class="p-5 border-b border-amber-100">Personas y Competencias</td>
+                                        <td id="avg-per1" class="p-5 text-center font-black">1.00</td>
+                                    </tr>
+                                    <tr class="bg-rose-50 text-rose-900">
+                                        <td class="p-5">Cultura y Gobernanza</td>
+                                        <td id="avg-cul1" class="p-5 text-center font-black">1.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-slate-700 shadow-inner">
+                                <h4 class="font-bold text-emerald-800 mb-3 uppercase text-sm tracking-widest">¿Cómo interpretar estos resultados?</h4>
+                                <ul class="list-disc ml-5 space-y-3 text-sm">
+                                    <li><strong>El Principio del Equilibrio:</strong> Un proceso de digitalización saludable debe crecer de forma pareja; idealmente, la figura debería asemejarse a un cuadrado equilibrado.</li>
+                                    <li><strong>El Peligro de la Asimetría:</strong> Si su gráfico tiene un pico pronunciado en "Tecnología" pero está hundido en "Personas" o "Cultura", existe un alto riesgo de fracaso por resistencia al cambio.</li>
+                                    <li><strong>Su Cuello de Botella:</strong> Observe qué punta de la figura está más cerca del centro (el cero). Esa dimensión con el puntaje más bajo es el eslabón más débil que frena el avance general y señala dónde debe concentrar sus primeros esfuerzos de mejora.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="tab_muro" class="tab-content animate-in fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-md border border-slate-200">
+                
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Gráfico de Resultados y Análisis</h2>
+                
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-10 max-w-full rounded-r-xl">
+                    <h3 class="font-bold text-emerald-800 mb-1">Visualizando el Equilibrio</h3>
+                    <p class="text-emerald-900 text-sm">El Gráfico de Radar conecta los promedios obtenidos en las cuatro dimensiones. Revise esta imagen de su realidad institucional para responder a la guía de exploración cualitativa en la parte inferior.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16 border-b-2 border-slate-200 pb-12">
+                    <div class="flex flex-col items-center">
+                        <canvas id="madurezRadar2" style="max-height: 450px;"></canvas>
+                    </div>
+                    <div class="space-y-8">
+                        <table class="w-full text-left border-collapse rounded-2xl overflow-hidden shadow-sm">
+                            <thead>
+                                <tr class="bg-emerald-900 text-white uppercase text-sm tracking-widest">
+                                    <th class="p-5">Dimensión Clave</th>
+                                    <th class="p-5 text-center">Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-lg font-medium">
+                                <tr class="bg-emerald-50 text-emerald-900">
+                                    <td class="p-5 border-b border-emerald-100">Tecnología y Conectividad</td>
+                                    <td id="avg-tec2" class="p-5 text-center font-black">1.00</td>
+                                </tr>
+                                <tr class="bg-blue-50 text-blue-900">
+                                    <td class="p-5 border-b border-blue-100">Procesos y Operaciones</td>
+                                    <td id="avg-pro2" class="p-5 text-center font-black">1.00</td>
+                                </tr>
+                                <tr class="bg-amber-50 text-amber-900">
+                                    <td class="p-5 border-b border-amber-100">Personas y Competencias</td>
+                                    <td id="avg-per2" class="p-5 text-center font-black">1.00</td>
+                                </tr>
+                                <tr class="bg-rose-50 text-rose-900">
+                                    <td class="p-5">Cultura y Gobernanza</td>
+                                    <td id="avg-cul2" class="p-5 text-center font-black">1.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-emerald-800 mb-4">Guía de Análisis Cualitativo</h3>
+                
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8 rounded-r-xl">
+                    <h3 class="font-bold text-emerald-800 mb-1">Descubriendo el "Porqué"</h3>
+                    <p class="text-emerald-900 text-sm">Los números por sí solos no revelan la historia completa. Esta guía utiliza preguntas abiertas diseñadas para generar un diálogo honesto y descubrir los verdaderos cuellos de botella operativos y los temores del equipo. Lea las preguntas y registre en el "Muro" los testimonios más reveladores.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="space-y-8">
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <h3 class="font-bold text-lg text-emerald-700 mb-4">Bloque 1: Exploración de Procesos</h3>
+                            <ul class="space-y-4 text-base text-slate-700 list-disc ml-6">
+                                <li>Si pudiera tener una "varita mágica" para eliminar una tarea, ¿cuál sería y por qué?</li>
+                                <li>En el pico de cosecha, ¿dónde se genera el principal cuello de botella?</li>
+                                <li>Cuando hay un reclamo, ¿cuánto tiempo toma encontrar la información?</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <h3 class="font-bold text-lg text-blue-700 mb-4">Bloque 2: Experiencia Tecnológica</h3>
+                            <ul class="space-y-4 text-base text-slate-700 list-disc ml-6">
+                                <li>De los sistemas actuales, ¿cuál es más útil y cuál da más dolores de cabeza?</li>
+                                <li>Si se invirtiera en un nuevo sistema, ¿cuál es su mayor temor?</li>
+                                <li>¿Cuál cree que es la principal barrera para que los socios usen el celular?</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <h3 class="font-bold text-lg text-rose-700 mb-4">Bloque 3: Visión de Futuro y Cultura</h3>
+                            <ul class="space-y-4 text-base text-slate-700 list-disc ml-6">
+                                <li>Ante una nueva tecnología, ¿quiénes la apoyarían y quiénes pondrían resistencia?</li>
+                                <li>¿Qué significaría que la cooperativa fuera "más moderna"?</li>
+                                <li>¿Qué es lo mínimo que se debe garantizar antes de exigir el uso de una herramienta?</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white">
+                        <h3 class="font-black text-slate-800 uppercase mb-6 text-sm tracking-widest">Muro de Hallazgos</h3>
+                        <div class="flex gap-4 mb-8">
+                            <input id="dolor-input" type="text" placeholder="Registre la respuesta de la entrevista..." class="flex-1 border-2 border-slate-200 rounded-2xl p-4 text-base outline-emerald-500">
+                            <button onclick="agregarDolor()" class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-700 transition shadow-md">Añadir</button>
+                        </div>
+                        <div id="muro" class="space-y-4 overflow-y-auto max-h-[500px] pr-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab_foda" class="tab-content animate-in fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-md border border-slate-200 space-y-8 text-base">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Matriz FODA Digital y Cruces</h2>
+                
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8 rounded-r-xl">
+                    <h3 class="font-bold text-emerald-800 mb-1">Paso 1: Organice y Paso 2: Analice</h3>
+                    <p class="text-emerald-900 text-sm">Primero, organice sus hallazgos en los 4 cuadrantes del FODA. Luego, descienda a la sección de "Cruces Estratégicos" para agrupar problemas y oportunidades combinando factores (Ej: usar una Fortaleza para mitigar una Amenaza).</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-emerald-50 p-6 rounded-3xl border-2 border-emerald-200 min-h-[200px] flex flex-col">
+                        <h3 class="font-black text-emerald-800 uppercase mb-4">Fortalezas</h3>
+                        <textarea id="foda-f" class="flex-1 bg-transparent border-none resize-none focus:ring-0" placeholder="Capacidades internas..."></textarea>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-3xl border-2 border-blue-200 min-h-[200px] flex flex-col">
+                        <h3 class="font-black text-blue-800 uppercase mb-4">Oportunidades</h3>
+                        <textarea id="foda-o" class="flex-1 bg-transparent border-none resize-none focus:ring-0" placeholder="Mercado / Entorno..."></textarea>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-3xl border-2 border-orange-200 min-h-[200px] flex flex-col">
+                        <h3 class="font-black text-orange-800 uppercase mb-4">Debilidades</h3>
+                        <textarea id="foda-d" class="flex-1 bg-transparent border-none resize-none focus:ring-0" placeholder="Brechas críticas..."></textarea>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-3xl border-2 border-rose-200 min-h-[200px] flex flex-col">
+                        <h3 class="font-black text-rose-800 uppercase mb-4">Amenazas</h3>
+                        <textarea id="foda-a" class="flex-1 bg-transparent border-none resize-none focus:ring-0" placeholder="Riesgos externos..."></textarea>
+                    </div>
+                </div>
+
+                <div class="border-t-2 border-slate-200 pt-10 mt-10">
+                    <h3 class="text-2xl font-bold text-emerald-800 mb-6">Cruces Estratégicos (Familias de Problemas)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-black text-emerald-700 text-sm mb-1 uppercase tracking-wider">Potencialidades (F + O)</h4>
+                            <p class="text-xs text-slate-500 mb-4 italic">¿Cómo usar sus fortalezas para aprovechar las oportunidades?</p>
+                            <textarea id="cruce-fo" class="w-full bg-white border border-slate-300 rounded-xl p-4 resize-none focus:ring-2 focus:ring-emerald-500 outline-none text-sm" rows="3" placeholder="Escriba su estrategia u oportunidad clave..."></textarea>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-black text-blue-700 text-sm mb-1 uppercase tracking-wider">Desafíos (D + O)</h4>
+                            <p class="text-xs text-slate-500 mb-4 italic">¿Cómo superar debilidades apoyándose en las oportunidades?</p>
+                            <textarea id="cruce-do" class="w-full bg-white border border-slate-300 rounded-xl p-4 resize-none focus:ring-2 focus:ring-emerald-500 outline-none text-sm" rows="3" placeholder="Escriba su estrategia de mejora..."></textarea>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <h4 class="font-black text-orange-700 text-sm mb-1 uppercase tracking-wider">Riesgos (F + A)</h4>
+                            <p class="text-xs text-slate-500 mb-4 italic">¿Cómo usar sus fortalezas para mitigar y defenderse de las amenazas?</p>
+                            <textarea id="cruce-fa" class="w-full bg-white border border-slate-300 rounded-xl p-4 resize-none focus:ring-2 focus:ring-emerald-500 outline-none text-sm" rows="3" placeholder="Escriba su estrategia defensiva..."></textarea>
+                        </div>
+                        <div class="bg-rose-50 p-6 rounded-2xl border border-rose-200 shadow-sm">
+                            <h4 class="font-black text-rose-700 text-sm mb-1 uppercase tracking-wider">Puntos Críticos (D + A)</h4>
+                            <p class="text-xs text-rose-600 mb-4 italic font-bold">Riesgo máximo. ¿Qué debe solucionar urgentemente para sobrevivir?</p>
+                            <textarea id="cruce-da" class="w-full bg-white border border-rose-300 rounded-xl p-4 resize-none focus:ring-2 focus:ring-rose-500 outline-none text-sm" rows="3" placeholder="Escriba la familia de problemas a resolver (Candidato para el embudo)..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab_embu" class="tab-content animate-in fade-in">
+            <div class="bg-white p-10 rounded-3xl shadow-md border border-slate-200">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4 underline">Embudo de Puntos Críticos</h2>
+                
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8 rounded-r-xl">
+                    <h3 class="font-bold text-emerald-800 mb-1">Definiendo Prioridades</h3>
+                    <p class="text-emerald-900 text-sm">El objetivo final del diagnóstico consiste en transformar el FODA en una lista breve y clara de 'puntos críticos' que requieren atención prioritaria. Valore cada problema y concéntrese en aquellas brechas de "Alto Impacto y Bajo Esfuerzo" que pueden generar victorias tempranas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-8">
+                    <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 flex flex-col h-full">
+                        <div class="space-y-6">
+                            <input id="lab-p" type="text" placeholder="Problema Prioritario..." class="w-full border-2 border-slate-200 rounded-2xl p-4 text-base outline-emerald-500">
+                            <div>
+                                <label class="text-xs font-black text-slate-500 uppercase">Esfuerzo (1 Fácil - 5 Difícil)</label>
+                                <input id="esf-p" type="range" min="1" max="5" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-2">
+                            </div>
+                            <div>
+                                <label class="text-xs font-black text-slate-500 uppercase">Impacto (1 Bajo - 5 Crítico)</label>
+                                <input id="imp-p" type="range" min="1" max="5" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-2">
+                            </div>
+                            <button onclick="agregarPunto()" class="w-full bg-emerald-600 text-white py-5 rounded-3xl font-black text-lg hover:bg-emerald-700 transition-all shadow-md">Agregar</button>
+                        </div>
+                        
+                        <div class="mt-10 pt-8 border-t border-slate-300 flex-1">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider">Puntos Agregados</h4>
+                                <button onclick="borrarTodosPuntos()" class="text-xs text-rose-600 hover:text-rose-800 font-bold underline transition-colors">Borrar Todos</button>
+                            </div>
+                            <div id="lista-puntos" class="space-y-3 overflow-y-auto max-h-[300px] pr-2">
+                                <p class="text-sm text-slate-400 italic">No hay puntos registrados aún.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-2 flex flex-col justify-center">
+                        <canvas id="embudoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Pestañas
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Radar (Inicializamos dos radares para Pestaña 1 y Pestaña 2)
+        let radar1, radar2;
+        function initRadar() {
+            const radarOptions = {
+                type: 'radar',
+                data: {
+                    labels: ['Tecnología', 'Procesos', 'Personas', 'Cultura'],
+                    datasets: [{
+                        data: [1, 1, 1, 1],
+                        backgroundColor: 'rgba(0, 156, 143, 0.25)',
+                        borderColor: '#009C8F',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#083E70',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, font: { size: 14 } }, pointLabels: { font: { size: 16, weight: 'bold' } } } },
+                    plugins: { legend: { display: false } }
+                }
+            };
+            
+            const ctx1 = document.getElementById('madurezRadar1').getContext('2d');
+            radar1 = new Chart(ctx1, JSON.parse(JSON.stringify(radarOptions)));
+            
+            const ctx2 = document.getElementById('madurezRadar2').getContext('2d');
+            radar2 = new Chart(ctx2, JSON.parse(JSON.stringify(radarOptions)));
+        }
+
+        function updateAll() {
+            // Mostrar 1.4 solo si 1.3 tiene un valor >= 1
+            const q3El = document.querySelector('input[name="d1_q3"]:checked');
+            const q3Val = q3El ? parseInt(q3El.value) : null;
+            const q4Container = document.getElementById('q1_4_container');
+            if (q3Val !== null && q3Val >= 1) {
+                q4Container.style.display = '';
+            } else {
+                q4Container.style.display = 'none';
+                document.querySelectorAll('input[name="d1_q4"]:checked').forEach(el => { el.checked = false; });
+            }
+
+            const t = calcularProm(['d1_q1', 'd1_q2', 'd1_q3', 'd1_q4']);
+            const p = calcularProm(['d2_q1', 'd2_q2', 'd2_q3']);
+            const h = calcularProm(['d3_q1', 'd3_q2', 'd3_q3']);
+            const c = calcularProm(['d4_q1', 'd4_q2', 'd4_q3', 'd4_q4']);
+            
+            const tFix = t.toFixed(2);
+            const pFix = p.toFixed(2);
+            const hFix = h.toFixed(2);
+            const cFix = c.toFixed(2);
+            
+            // Actualizar tabla Pestaña 1
+            document.getElementById('avg-tec1').textContent = tFix;
+            document.getElementById('avg-pro1').textContent = pFix;
+            document.getElementById('avg-per1').textContent = hFix;
+            document.getElementById('avg-cul1').textContent = cFix;
+
+            // Actualizar tabla Pestaña 2
+            document.getElementById('avg-tec2').textContent = tFix;
+            document.getElementById('avg-pro2').textContent = pFix;
+            document.getElementById('avg-per2').textContent = hFix;
+            document.getElementById('avg-cul2').textContent = cFix;
+            
+            // Actualizar gráficos
+            const newData = [t, p, h, c];
+            radar1.data.datasets[0].data = newData;
+            radar1.update();
+            
+            radar2.data.datasets[0].data = newData;
+            radar2.update();
+        }
+
+        function calcularProm(names) {
+            let sum = 0, count = 0;
+            names.forEach(n => {
+                const el = document.querySelector(`input[name="${n}"]:checked`);
+                if(el) { sum += parseInt(el.value); count++; }
+            });
+            return count > 0 ? (sum / count) : 1;
+        }
+
+        // Muro
+        const dolores = [];
+        function agregarDolor() {
+            const val = document.getElementById('dolor-input').value;
+            if(!val) return;
+            dolores.push(val);
+            const card = document.createElement('div');
+            card.className = "p-5 bg-emerald-50 border-l-8 border-emerald-500 rounded-2xl shadow-sm";
+            card.innerHTML = `<p class="italic text-slate-700">"${val}"</p>`;
+            document.getElementById('muro').prepend(card);
+            document.getElementById('dolor-input').value = '';
+        }
+
+        // Embudo - Gestión Avanzada
+        let embudo;
+        let puntos = [];
+
+        function initEmbudo() {
+            const ctx = document.getElementById('embudoChart').getContext('2d');
+            embudo = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: [{ data: [], backgroundColor: '#009C8F', pointRadius: 12 }] },
+                options: {
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Esfuerzo →', font: { size: 14, weight: 'bold' } }, 
+                            min: 1, 
+                            max: 5,
+                            ticks: { stepSize: 1 }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Impacto ↑', font: { size: 14, weight: 'bold' } }, 
+                            min: 1, 
+                            max: 5,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: { tooltip: { callbacks: { label: (c) => c.raw.n } }, legend: { display: false } }
+                }
+            });
+        }
+
+        function actualizarGraficoYLista() {
+            embudo.data.datasets[0].data = puntos.map(p => ({ x: p.x, y: p.y, n: p.n }));
+            embudo.update();
+            
+            const contenedor = document.getElementById('lista-puntos');
+            contenedor.innerHTML = '';
+            
+            if(puntos.length === 0) {
+                contenedor.innerHTML = '<p class="text-sm text-slate-400 italic">No hay puntos registrados aún.</p>';
+                return;
+            }
+
+            puntos.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex-1 pr-4 overflow-hidden">
+                        <p class="font-bold text-slate-800 text-sm truncate" title="${p.n}">${p.n}</p>
+                        <p class="text-xs text-slate-500 mt-1">Esfuerzo: ${p.x} | Impacto: ${p.y}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editarPunto(${i})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors border border-transparent hover:border-blue-200" title="Editar">✏️</button>
+                        <button onclick="eliminarPunto(${i})" class="text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-colors border border-transparent hover:border-rose-200" title="Eliminar">🗑️</button>
+                    </div>
+                `;
+                contenedor.appendChild(div);
+            });
+        }
+
+        function agregarPunto() {
+            const n = document.getElementById('lab-p').value;
+            const x = document.getElementById('esf-p').value;
+            const y = document.getElementById('imp-p').value;
+            if(!n) return;
+            
+            puntos.push({ n, x, y });
+            
+            document.getElementById('lab-p').value = '';
+            document.getElementById('esf-p').value = '3';
+            document.getElementById('imp-p').value = '3';
+            
+            actualizarGraficoYLista();
+        }
+
+        function eliminarPunto(index) {
+            puntos.splice(index, 1);
+            actualizarGraficoYLista();
+        }
+
+        function editarPunto(index) {
+            const p = puntos[index];
+            document.getElementById('lab-p').value = p.n;
+            document.getElementById('esf-p').value = p.x;
+            document.getElementById('imp-p').value = p.y;
+            eliminarPunto(index);
+        }
+
+        function borrarTodosPuntos() {
+            if(confirm('¿Está seguro de que desea borrar todos los puntos priorizados? Esta acción no se puede deshacer.')) {
+                puntos = [];
+                actualizarGraficoYLista();
+            }
+        }
+
+        // Descarga Total
+        function descargarReporte() {
+            let text = "REPORTE DE DIAGNÓSTICO DIGITAL - MÓDULO 1\n========================================\n\nPROMEDIOS DE MADUREZ:\n";
+            text += "- Tecnología: " + document.getElementById('avg-tec1').textContent + "\n";
+            text += "- Procesos: " + document.getElementById('avg-pro1').textContent + "\n";
+            text += "- Personas: " + document.getElementById('avg-per1').textContent + "\n";
+            text += "- Cultura: " + document.getElementById('avg-cul1').textContent + "\n\nREFLEXIONES CUALITATIVAS:\n";
+            dolores.forEach(d => text += "- " + d + "\n");
+            text += "\nMATRIZ FODA BASE:\n- Fortalezas: " + document.getElementById('foda-f').value + "\n";
+            text += "- Oportunidades: " + document.getElementById('foda-o').value + "\n";
+            text += "- Debilidades: " + document.getElementById('foda-d').value + "\n";
+            text += "- Amenazas: " + document.getElementById('foda-a').value + "\n\n";
+            
+            text += "CRUCES ESTRATÉGICOS (FAMILIAS DE PROBLEMAS):\n";
+            text += "- Potencialidades (F+O): " + document.getElementById('cruce-fo').value + "\n";
+            text += "- Desafíos (D+O): " + document.getElementById('cruce-do').value + "\n";
+            text += "- Riesgos (F+A): " + document.getElementById('cruce-fa').value + "\n";
+            text += "- Puntos Críticos (D+A): " + document.getElementById('cruce-da').value + "\n\n";
+
+            text += "PUNTOS CRÍTICOS PRIORIZADOS (EMBUDO):\n";
+            puntos.forEach(p => text += "- " + p.n + " (Esfuerzo: " + p.x + ", Impacto: " + p.y + ")\n");
+
+            const blob = new Blob([text], { type: "text/plain" });
+            const anchor = document.createElement("a");
+            anchor.download = "Diagnostico_Digital.txt";
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.target = "_blank";
+            anchor.style.display = "none";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+        }
+
+        window.onload = () => { initRadar(); initEmbudo(); actualizarGraficoYLista(); };
+    </script>
+</body>
+</html>
