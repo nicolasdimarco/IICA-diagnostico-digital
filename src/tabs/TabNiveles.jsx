@@ -32,7 +32,7 @@ function PreguntaProgreso({ id, label, valor, onChange, tone }) {
   return (
     <div>
       <div className="flex justify-between items-baseline gap-2 mb-2">
-        <p className="font-bold text-base">{label}</p>
+        <p className="font-bold text-sm sm:text-base leading-snug">{label}</p>
         <span className="font-bold text-sm tabular-nums shrink-0">
           {current >= 0 ? `${current} / 5` : '— / 5'}
         </span>
@@ -40,7 +40,7 @@ function PreguntaProgreso({ id, label, valor, onChange, tone }) {
       <div
         role="group"
         aria-label={label}
-        className="flex gap-1 select-none"
+        className="flex gap-1 select-none touch-manipulation"
         onKeyDown={(e) => {
           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); move(1) }
           else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); move(-1) }
@@ -59,8 +59,8 @@ function PreguntaProgreso({ id, label, valor, onChange, tone }) {
               data-value={seg}
               aria-pressed={seg === current}
               onClick={() => setVal(seg)}
-              className={`flex-1 h-9 text-xs font-bold transition border ${
-                filled ? `${fill} text-white border-transparent` : 'bg-white text-slate-500 border-slate-300 hover:bg-slate-100'
+              className={`flex-1 h-11 sm:h-9 text-sm sm:text-xs font-bold transition border ${
+                filled ? `${fill} text-white border-transparent` : 'bg-white text-slate-500 border-slate-300 hover:bg-slate-100 active:bg-slate-200'
               }`}
             >{seg}</button>
           )
@@ -81,16 +81,16 @@ export default function TabNiveles() {
   }
 
   return (
-    <div className="space-y-10">
-      <div className="bg-white p-10 shadow-md border border-slate-200">
-        <div className="bg-emerald-50 border-l-4 border-emerald-500 p-5 mb-8">
+    <div className="space-y-6 sm:space-y-10">
+      <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-md border border-slate-200">
+        <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 sm:p-5 mb-6 sm:mb-8">
           <h3 className="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
           <p className="text-emerald-900 text-sm">
             Este primer instrumento es una herramienta cuantitativa diseñada para valorar el nivel de madurez en las cuatro dimensiones clave y obtener un puntaje inicial que revele "dónde están" las principales fortalezas y debilidades. Evalúe cada variable utilizando una escala donde 1 significa "Inexistente" (no tenemos esto en absoluto) y 5 significa "Optimizado" (está completamente integrado).
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 mb-10">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-6 sm:mb-10">
           <div className={`wizard-pill ${step === 1 ? 'active' : ''}`}>
             <span className="num">1</span>
             <span className="font-bold uppercase tracking-wider text-sm">Completar cuestionario</span>
@@ -103,11 +103,11 @@ export default function TabNiveles() {
 
         {step === 1 && (
           <div>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
               {DIMENSIONES.map((dim) => (
-                <div key={dim.key} className={`space-y-8 ${TONE_BG[dim.colorTone]} p-6`}>
-                  <h3 className={`font-black uppercase text-lg border-b pb-2 ${TONE_H3[dim.colorTone]}`}>{dim.titulo}</h3>
-                  <div className="space-y-4">
+                <div key={dim.key} className={`space-y-6 sm:space-y-8 ${TONE_BG[dim.colorTone]} p-4 sm:p-6`}>
+                  <h3 className={`font-black uppercase text-base sm:text-lg border-b pb-2 ${TONE_H3[dim.colorTone]}`}>{dim.titulo}</h3>
+                  <div className="space-y-5 sm:space-y-4">
                     {dim.preguntas.map((p) =>
                       verPregunta(p) ? (
                         <PreguntaProgreso key={p.id} id={p.id} label={p.label} valor={respuestas[p.id]} onChange={setRespuesta} tone={dim.colorTone} />
@@ -118,11 +118,11 @@ export default function TabNiveles() {
               ))}
             </form>
 
-            <div className="mt-10 flex justify-end">
+            <div className="mt-8 sm:mt-10 sm:flex sm:justify-end">
               <button
                 type="button"
                 onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-                className="bg-emerald-600 text-white px-8 py-4 font-bold hover:bg-emerald-700 transition shadow-md flex items-center gap-2"
+                className="bg-emerald-600 text-white w-full sm:w-auto px-8 py-4 font-bold hover:bg-emerald-700 transition shadow-md flex items-center justify-center gap-2"
               >
                 VER RESULTADOS
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
@@ -133,23 +133,23 @@ export default function TabNiveles() {
 
         {step === 2 && (
           <div>
-            <div className="mb-8 flex justify-start">
+            <div className="mb-6 sm:mb-8 flex justify-start">
               <button
                 type="button"
                 onClick={() => { setStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-                className="bg-white text-emerald-800 border-2 border-emerald-600 px-6 py-3 font-bold hover:bg-emerald-50 transition flex items-center gap-2"
+                className="bg-white text-emerald-800 border-2 border-emerald-600 px-4 sm:px-6 py-3 font-bold hover:bg-emerald-50 transition flex items-center gap-2 text-sm sm:text-base"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
                 Volver al cuestionario
               </button>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="flex flex-col items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+              <div className="flex flex-col items-center w-full">
                 <RadarMadurez promedios={promedios} />
               </div>
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 <TablaPromedios promedios={promedios} />
-                <div className="p-6 bg-slate-50 border border-slate-200 text-slate-700 shadow-inner">
+                <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 text-slate-700 shadow-inner">
                   <h4 className="font-bold text-emerald-800 mb-3 uppercase text-sm tracking-widest">¿Cómo interpretar estos resultados?</h4>
                   <ul className="list-disc ml-5 space-y-3 text-sm">
                     <li><strong>El Principio del Equilibrio:</strong> Un proceso de digitalización saludable debe crecer de forma pareja; idealmente, la figura debería asemejarse a un cuadrado equilibrado.</li>

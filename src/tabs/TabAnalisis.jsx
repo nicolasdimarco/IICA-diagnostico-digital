@@ -107,15 +107,15 @@ export default function TabAnalisis() {
   }, [hallazgos])
 
   return (
-    <div className="bg-white p-10 shadow-md border border-slate-200">
-      <h3 className="text-2xl font-bold text-emerald-800 mb-4">Guía de Análisis Cualitativo</h3>
+    <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-md border border-slate-200">
+      <h3 className="text-xl sm:text-2xl font-bold text-emerald-800 mb-4">Guía de Análisis Cualitativo</h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
+        <div className="space-y-6 sm:space-y-8">
           {BLOQUES.map((b) => (
-            <div key={b.id} className="bg-slate-50 p-6 border border-slate-200">
-              <h3 className={`font-bold text-lg mb-4 ${b.color}`}>{b.titulo}</h3>
-              <ul className="space-y-4 text-base text-slate-700 list-disc ml-6">
+            <div key={b.id} className="bg-slate-50 p-4 sm:p-6 border border-slate-200">
+              <h3 className={`font-bold text-base sm:text-lg mb-3 sm:mb-4 ${b.color}`}>{b.titulo}</h3>
+              <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-700 list-disc ml-5 sm:ml-6">
                 {b.items.map((q, j) => <li key={j}>{q}</li>)}
               </ul>
             </div>
@@ -123,10 +123,10 @@ export default function TabAnalisis() {
         </div>
 
         <div className="bg-white">
-          <h3 className="font-black text-slate-800 uppercase mb-6 text-sm tracking-widest">Muro de Hallazgos</h3>
-          <div className="flex flex-col gap-3 mb-8">
+          <h3 className="font-black text-slate-800 uppercase mb-4 sm:mb-6 text-sm tracking-widest">Muro de Hallazgos</h3>
+          <div className="flex flex-col gap-3 mb-6 sm:mb-8">
             <ComboboxBloque value={bloque} onChange={setBloque} />
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 value={texto}
@@ -139,11 +139,11 @@ export default function TabAnalisis() {
                 type="button"
                 onClick={onAgregar}
                 disabled={!puedeAgregar}
-                className="shrink-0 bg-emerald-600 text-white px-6 py-4 font-bold hover:bg-emerald-700 transition shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed"
+                className="shrink-0 bg-emerald-600 text-white px-6 py-4 font-bold hover:bg-emerald-700 transition shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed w-full sm:w-auto"
               >Añadir</button>
             </div>
           </div>
-          <div className="space-y-6 overflow-y-auto max-h-[500px] pr-2">
+          <div className="space-y-6 overflow-y-auto max-h-[60vh] lg:max-h-[500px] pr-1 sm:pr-2">
             {hallazgosPorBloque.map(([titulo, lista]) => {
               const b = buscarBloquePorTitulo(titulo)
               const accent = b?.accent || 'border-slate-400 bg-slate-50'

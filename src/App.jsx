@@ -15,7 +15,7 @@ export default function App() {
 
   return (
     <div className="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
-      <div className="max-w-6xl mx-auto p-6 sm:p-10">
+      <div className="max-w-6xl mx-auto p-3 sm:p-6 lg:p-10">
         <Header />
         <TabsNav activeTab={tab} onChange={onChangeTab} />
         {tab === 'niveles' && <TabNiveles />}
