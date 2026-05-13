@@ -26,10 +26,10 @@ export function DiagnosticoProvider({ children }) {
       return next
     })
 
-  const agregarHallazgo = (texto) => {
+  const agregarHallazgo = (texto, bloque = '') => {
     const v = (texto || '').trim()
     if (!v) return
-    setHallazgos((prev) => [v, ...prev])
+    setHallazgos((prev) => [{ texto: v, bloque: (bloque || '').trim() }, ...prev])
   }
   const borrarHallazgos = () => setHallazgos([])
 

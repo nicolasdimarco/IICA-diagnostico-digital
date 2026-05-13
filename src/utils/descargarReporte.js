@@ -9,7 +9,17 @@ export function descargarReporte({ promedios, hallazgos, foda, cruces, puntos })
   text += `- Cultura: ${fmt(promedios.cul)}\n\n`
 
   text += 'REFLEXIONES CUALITATIVAS:\n'
-  hallazgos.forEach((d) => { text += `- ${d}\n` })
+  const grupos = new Map()
+  hallazgos.forEach((h) => {
+    const item = typeof h === 'string' ? { texto: h, bloque: '' } : h
+    const key = item.bloque || '(Sin bloque)'
+    if (!grupos.has(key)) grupos.set(key, [])
+    grupos.get(key).push(item.texto)
+  })
+  for (const [bloque, lista] of grupos) {
+    text += `\n[${bloque}]\n`
+    lista.forEach((t) => { text += `- ${t}\n` })
+  }
 
   text += '\nMATRIZ FODA BASE:\n'
   text += `- Fortalezas: ${foda.f}\n`

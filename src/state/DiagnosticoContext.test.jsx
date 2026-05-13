@@ -35,21 +35,30 @@ describe('DiagnosticoContext', () => {
     expect(result.current.respuestas.d1_q4).toBeUndefined()
   })
 
-  it('agregarHallazgo descarta entradas vacías y agrega al principio', () => {
+  it('agregarHallazgo descarta entradas vacías y agrega al principio con su bloque', () => {
     const { result } = renderHook(() => useDiagnostico(), { wrapper })
-    act(() => { result.current.agregarHallazgo('   ') })
+    act(() => { result.current.agregarHallazgo('   ', 'Bloque 1') })
     expect(result.current.hallazgos).toEqual([])
     act(() => {
-      result.current.agregarHallazgo('uno')
-      result.current.agregarHallazgo('dos')
+      result.current.agregarHallazgo('uno', 'Bloque 1: Exploración de Procesos')
+      result.current.agregarHallazgo('dos', 'Bloque 2: Experiencia Tecnológica')
     })
-    expect(result.current.hallazgos).toEqual(['dos', 'uno'])
+    expect(result.current.hallazgos).toEqual([
+      { texto: 'dos', bloque: 'Bloque 2: Experiencia Tecnológica' },
+      { texto: 'uno', bloque: 'Bloque 1: Exploración de Procesos' },
+    ])
+  })
+
+  it('agregarHallazgo sin bloque guarda bloque vacío', () => {
+    const { result } = renderHook(() => useDiagnostico(), { wrapper })
+    act(() => { result.current.agregarHallazgo('libre') })
+    expect(result.current.hallazgos).toEqual([{ texto: 'libre', bloque: '' }])
   })
 
   it('borrarHallazgos vacía la lista', () => {
     const { result } = renderHook(() => useDiagnostico(), { wrapper })
     act(() => {
-      result.current.agregarHallazgo('x')
+      result.current.agregarHallazgo('x', 'b')
       result.current.borrarHallazgos()
     })
     expect(result.current.hallazgos).toEqual([])
