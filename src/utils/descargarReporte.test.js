@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { descargarReporte } from './descargarReporte.js'
+import { modulo1 } from '../modules/modulo1/index.js'
+import { modulo2 } from '../modules/modulo2/index.js'
 
-const datos = {
+const state = {
   promedios: { tec: 4.5, pro: 3, per: 2.25, cul: 1 },
   hallazgos: [
     { texto: 'Hallazgo A', bloque: 'Bloque 1: Exploración de Procesos' },
@@ -14,7 +16,19 @@ const datos = {
     { n: 'P1', x: 2, y: 4 },
     { n: 'P2', x: 5, y: 5 },
   ],
+  modulo2: {
+    vision: { dolores: '', expectativas: '', estadoFuturo: 'una cooperativa digital', habilitadores: 'datos + capacitación', proposito: 'mejorar la atención al socio', statement: 'Visión X', statementManual: false },
+    iniciativas: [
+      { id: 'a', nombre: 'QW-1', impacto: 5, esfuerzo: 2, descripcion: '' },
+      { id: 'b', nombre: 'Est-1', impacto: 5, esfuerzo: 5, descripcion: '' },
+    ],
+    smart: { a: { especifico: 'X', medible: 'Y', alcanzable: 'Z', relevante: 'W', temporal: '30 días' } },
+    gobernanza: { responsable: 'Juan Pérez', modeloLiderazgo: 'campeon', fechaRevision: '2026-09-30' },
+  },
 }
+
+const callDescargar = (s = state, modulos = [modulo1, modulo2]) =>
+  descargarReporte({ modulos, state: s })
 
 describe('descargarReporte', () => {
   let blobCapturado
@@ -32,14 +46,15 @@ describe('descargarReporte', () => {
   })
 
   it('genera blob de tipo text/plain con encabezado del reporte', () => {
-    descargarReporte(datos)
+    callDescargar()
     expect(global.Blob).toHaveBeenCalledTimes(1)
     expect(blobCapturado.opts).toEqual({ type: 'text/plain' })
-    expect(blobCapturado.text).toContain('REPORTE DE DIAGNÓSTICO DIGITAL - MÓDULO 1')
+    expect(blobCapturado.text).toContain('REPORTE DE DIAGNÓSTICO DIGITAL')
+    expect(blobCapturado.text).toContain('MÓDULO 1 — DIAGNÓSTICO DIGITAL')
   })
 
   it('formatea los promedios con 2 decimales', () => {
-    descargarReporte(datos)
+    callDescargar()
     expect(blobCapturado.text).toContain('- Tecnología: 4.50')
     expect(blobCapturado.text).toContain('- Procesos: 3.00')
     expect(blobCapturado.text).toContain('- Personas: 2.25')
@@ -47,14 +62,13 @@ describe('descargarReporte', () => {
   })
 
   it('incluye hallazgos agrupados por bloque, FODA, cruces y puntos críticos', () => {
-    descargarReporte(datos)
+    callDescargar()
     const t = blobCapturado.text
     expect(t).toContain('[Bloque 1: Exploración de Procesos]')
     expect(t).toContain('[Bloque 2: Experiencia Tecnológica]')
     expect(t).toContain('- Hallazgo A')
     expect(t).toContain('- Hallazgo B')
     expect(t).toContain('- Hallazgo C')
-    // Hallazgos del mismo bloque agrupados juntos (A y C antes que B)
     const idxA = t.indexOf('- Hallazgo A')
     const idxC = t.indexOf('- Hallazgo C')
     const idxB = t.indexOf('- Hallazgo B')
@@ -68,7 +82,7 @@ describe('descargarReporte', () => {
   })
 
   it('soporta hallazgos como strings (compatibilidad hacia atrás)', () => {
-    descargarReporte({ ...datos, hallazgos: ['Sin bloque uno', 'Sin bloque dos'] })
+    callDescargar({ ...state, hallazgos: ['Sin bloque uno', 'Sin bloque dos'] })
     const t = blobCapturado.text
     expect(t).toContain('[(Sin bloque)]')
     expect(t).toContain('- Sin bloque uno')
@@ -76,19 +90,47 @@ describe('descargarReporte', () => {
   })
 
   it('dispara click sobre el anchor para iniciar la descarga', () => {
-    descargarReporte(datos)
+    callDescargar()
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
   it('tolera arrays vacíos sin romper', () => {
     expect(() =>
-      descargarReporte({
+      callDescargar({
         promedios: { tec: 1, pro: 1, per: 1, cul: 1 },
         hallazgos: [],
         foda: { f: '', o: '', d: '', a: '' },
         cruces: { fo: '', do: '', fa: '', da: '' },
         puntos: [],
+        modulo2: {
+          vision: { dolores: '', expectativas: '', estadoFuturo: '', habilitadores: '', proposito: '', statement: '', statementManual: false },
+          iniciativas: [],
+          smart: {},
+          gobernanza: { responsable: '', modeloLiderazgo: '', fechaRevision: '' },
+        },
       }),
     ).not.toThrow()
+  })
+
+  it('incluye la sección de Módulo 2 con visión, iniciativas, SMART y gobernanza', () => {
+    callDescargar()
+    const t = blobCapturado.text
+    expect(t).toContain('MÓDULO 2 — ESTRATEGIA DIGITAL')
+    expect(t).toContain('Statement consolidado')
+    expect(t).toContain('Visión X')
+    expect(t).toContain('[Quick Win]')
+    expect(t).toContain('- QW-1 (Impacto: 5, Esfuerzo: 2)')
+    expect(t).toContain('[Proyecto Estratégico]')
+    expect(t).toContain('- Est-1 (Impacto: 5, Esfuerzo: 5)')
+    expect(t).toContain('* QW-1')
+    expect(t).toContain('- Responsable: Juan Pérez')
+    expect(t).toContain('- Modelo de liderazgo: Gestor/Campeón Digital')
+    expect(t).toContain('- Primera revisión trimestral: 2026-09-30')
+  })
+
+  it('respeta el orden de los módulos en la salida', () => {
+    callDescargar()
+    const t = blobCapturado.text
+    expect(t.indexOf('MÓDULO 1')).toBeLessThan(t.indexOf('MÓDULO 2'))
   })
 })

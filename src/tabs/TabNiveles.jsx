@@ -86,7 +86,7 @@ export default function TabNiveles() {
         <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 sm:p-5 mb-6 sm:mb-8">
           <h3 className="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
           <p className="text-emerald-900 text-sm">
-            Este primer instrumento es una herramienta cuantitativa diseñada para valorar el nivel de madurez en las cuatro dimensiones clave y obtener un puntaje inicial que revele "dónde están" las principales fortalezas y debilidades. Evalúe cada variable utilizando una escala donde 1 significa "Inexistente" (no tenemos esto en absoluto) y 5 significa "Optimizado" (está completamente integrado).
+            Este primer instrumento es una herramienta cuantitativa diseñada para valorar el nivel de madurez en cuatro dimensiones clave y obtener un puntaje inicial que revele "dónde están" las principales fortalezas y debilidades. Evalúe cada variable utilizando una escala donde 1 significa "Inexistente" (no tenemos esto en absoluto) y 5 significa "Optimizado" (está completamente integrado).
           </p>
         </div>
 

@@ -1,28 +1,90 @@
 import { useState } from 'react'
 import Header from './components/Header.jsx'
 import TabsNav from './components/TabsNav.jsx'
-import TabNiveles from './tabs/TabNiveles.jsx'
-import TabAnalisis from './tabs/TabAnalisis.jsx'
-import TabFoda from './tabs/TabFoda.jsx'
-import TabEmbudo from './tabs/TabEmbudo.jsx'
+import Welcome from './components/Welcome.jsx'
+import WelcomeReturning from './components/WelcomeReturning.jsx'
+import ConfirmResetDialog from './components/ConfirmResetDialog.jsx'
+import { useDiagnostico } from './state/DiagnosticoContext.jsx'
+import { readSnapshot, hasProgress } from './state/storage.js'
+import { MODULOS, buscarModulo, buscarStep } from './modules/index.js'
 
 export default function App() {
-  const [tab, setTab] = useState('niveles')
-  const onChangeTab = (id) => {
-    setTab(id)
+  const { resetAll } = useDiagnostico()
+  const [moduleId, setModuleId] = useState(MODULOS[0].id)
+  const [stepId, setStepId] = useState(MODULOS[0].steps[0].id)
+  const [started, setStarted] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(true)
+  // 'first' (primera visita o post-reset) | 'returning' (snapshot con progreso detectado)
+  const [welcomeMode, setWelcomeMode] = useState(() =>
+    hasProgress(readSnapshot()) ? 'returning' : 'first',
+  )
+  const [showConfirmReset, setShowConfirmReset] = useState(false)
+
+  const onChangeModule = (id) => {
+    const m = buscarModulo(id)
+    setModuleId(m.id)
+    setStepId(m.steps[0].id)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const onChangeStep = (id) => {
+    setStepId(id)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const dismissWelcome = () => {
+    setStarted(true)
+    setTimeout(() => setShowWelcome(false), 600)
+  }
+
+  const onRestart = () => setShowConfirmReset(true)
+  const onCancelReset = () => setShowConfirmReset(false)
+  const onConfirmReset = () => {
+    resetAll()
+    setShowConfirmReset(false)
+    setWelcomeMode('first')
+    setModuleId(MODULOS[0].id)
+    setStepId(MODULOS[0].steps[0].id)
+  }
+
+  const moduloActivo = buscarModulo(moduleId)
+  const StepComponent = buscarStep(moduleId, stepId).Component
+
   return (
     <div className="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
-      <div className="max-w-6xl mx-auto p-3 sm:p-6 lg:p-10">
-        <Header />
-        <TabsNav activeTab={tab} onChange={onChangeTab} />
-        {tab === 'niveles' && <TabNiveles />}
-        {tab === 'analisis' && <TabAnalisis />}
-        {tab === 'foda' && <TabFoda />}
-        {tab === 'embudo' && <TabEmbudo />}
+      <div
+        className={`w-full px-3 sm:px-6 lg:px-10 py-3 sm:py-6 lg:py-10 transition-opacity duration-500 ${started ? 'opacity-100' : 'opacity-0'}`}
+        aria-hidden={!started}
+      >
+        <Header
+          modulos={MODULOS}
+          activeModule={moduleId}
+          onChangeModule={onChangeModule}
+        />
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 lg:items-start">
+          <TabsNav
+            moduloActivo={moduloActivo}
+            activeStep={stepId}
+            onChangeStep={onChangeStep}
+          />
+          <main className="flex-1 min-w-0">
+            <StepComponent />
+          </main>
+        </div>
       </div>
+      {showWelcome && welcomeMode === 'first' && (
+        <Welcome onStart={dismissWelcome} fadingOut={started} />
+      )}
+      {showWelcome && welcomeMode === 'returning' && (
+        <WelcomeReturning
+          onContinue={dismissWelcome}
+          onRestart={onRestart}
+          fadingOut={started}
+        />
+      )}
+      {showConfirmReset && (
+        <ConfirmResetDialog onConfirm={onConfirmReset} onCancel={onCancelReset} />
+      )}
     </div>
   )
 }

@@ -82,6 +82,52 @@ function ComboboxBloque({ value, onChange }) {
   )
 }
 
+function BloqueGuia({ bloque }) {
+  const [ejemplo, setEjemplo] = useState(null)
+  const idxRef = useRef(0)
+  const timerRef = useRef(null)
+
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current) }, [])
+
+  const mostrarEjemplo = () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    const i = idxRef.current % bloque.ejemplos.length
+    idxRef.current = i + 1
+    setEjemplo({ texto: bloque.ejemplos[i], key: Date.now() })
+    timerRef.current = setTimeout(() => setEjemplo(null), 5000)
+  }
+
+  return (
+    <div className="bg-slate-50 p-4 sm:p-6 border border-slate-200">
+      <h3 className={`font-bold text-base sm:text-lg mb-3 sm:mb-4 ${bloque.color}`}>{bloque.titulo}</h3>
+      <p className="text-sm sm:text-base text-slate-700 mb-3 sm:mb-4">{bloque.descripcion}</p>
+      <button
+        type="button"
+        onClick={mostrarEjemplo}
+        className="inline-flex items-center gap-2 bg-white border-2 border-slate-300 text-slate-700 px-4 py-2 text-sm font-bold uppercase tracking-wider hover:bg-slate-100 hover:border-slate-400 transition min-h-[44px]"
+        aria-label={`Ver ejemplo de ${bloque.titulo}`}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+        Ver ejemplo
+      </button>
+      {ejemplo && (
+        <span
+          key={ejemplo.key}
+          role="status"
+          aria-live="polite"
+          className={`block mt-3 sm:mt-4 p-3 sm:p-4 bg-white border-l-8 shadow-sm italic text-slate-700 text-sm sm:text-base ${bloque.accent}`}
+        >
+          {ejemplo.texto}
+        </span>
+      )}
+    </div>
+  )
+}
+
 export default function TabAnalisis() {
   const { hallazgos, agregarHallazgo } = useDiagnostico()
   const [texto, setTexto] = useState('')
@@ -113,12 +159,7 @@ export default function TabAnalisis() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
         <div className="space-y-6 sm:space-y-8">
           {BLOQUES.map((b) => (
-            <div key={b.id} className="bg-slate-50 p-4 sm:p-6 border border-slate-200">
-              <h3 className={`font-bold text-base sm:text-lg mb-3 sm:mb-4 ${b.color}`}>{b.titulo}</h3>
-              <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-700 list-disc ml-5 sm:ml-6">
-                {b.items.map((q, j) => <li key={j}>{q}</li>)}
-              </ul>
-            </div>
+            <BloqueGuia key={b.id} bloque={b} />
           ))}
         </div>
 

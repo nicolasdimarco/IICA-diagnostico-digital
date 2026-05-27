@@ -24,6 +24,21 @@ input[type="radio"] {
   background-color: #EEEEEE;
 }
 
+/* Variante vertical (sidebar) en pantallas grandes: el indicador
+   activo pasa del borde inferior al borde izquierdo. */
+@media (min-width: 1024px) {
+  .tabs-vertical { flex-direction: column; }
+  .tabs-vertical .tab-button {
+    text-align: left;
+    white-space: normal;
+    border-left: 4px solid transparent;
+  }
+  .tabs-vertical .tab-button.active {
+    border-bottom: none;
+    border-left: 4px solid #009C8F;
+  }
+}
+
 .wizard-pill {
   flex: 1;
   padding: 1rem 1.25rem;
@@ -59,5 +74,58 @@ input[type="radio"] {
   .wizard-pill:last-child {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 18px 50%);
     padding-right: 1.25rem;
+  }
+}
+
+/* Pills de módulos: barra de progreso clickeable dentro del header oscuro. */
+.module-pill {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.10);
+  color: #ECFDF5;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  min-width: 0;
+}
+.module-pill:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+.module-pill.active {
+  background: #fff;
+  color: #064E3B;
+  border-color: #fff;
+  cursor: default;
+}
+.module-pill .num {
+  width: 1.75rem; height: 1.75rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.20);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+.module-pill.active .num { background: #009C8F; color: #fff; }
+
+@media (min-width: 640px) {
+  .module-pill {
+    border: none;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+  }
+  .module-pill:first-child {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+    padding-left: 1rem;
+  }
+  .module-pill:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%);
+    padding-right: 1rem;
   }
 }
