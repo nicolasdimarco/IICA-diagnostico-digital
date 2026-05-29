@@ -61,16 +61,14 @@ export default function App() {
           activeModule={moduleId}
           onChangeModule={onChangeModule}
         />
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 lg:items-start">
-          <TabsNav
-            moduloActivo={moduloActivo}
-            activeStep={stepId}
-            onChangeStep={onChangeStep}
-          />
-          <main className="flex-1 min-w-0">
-            <StepComponent />
-          </main>
-        </div>
+        <TabsNav
+          moduloActivo={moduloActivo}
+          activeStep={stepId}
+          onChangeStep={onChangeStep}
+        />
+        <main className="min-w-0">
+          <StepComponent />
+        </main>
       </div>
       {showWelcome && welcomeMode === 'first' && (
         <Welcome onStart={dismissWelcome} fadingOut={started} />

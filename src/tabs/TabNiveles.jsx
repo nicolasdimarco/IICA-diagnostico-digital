@@ -90,17 +90,6 @@ export default function TabNiveles() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-6 sm:mb-10">
-          <div className={`wizard-pill ${step === 1 ? 'active' : ''}`}>
-            <span className="num">1</span>
-            <span className="font-bold uppercase tracking-wider text-sm">Completar cuestionario</span>
-          </div>
-          <div className={`wizard-pill ${step === 2 ? 'active' : ''}`}>
-            <span className="num">2</span>
-            <span className="font-bold uppercase tracking-wider text-sm">Ver resultados</span>
-          </div>
-        </div>
-
         {step === 1 && (
           <div>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">

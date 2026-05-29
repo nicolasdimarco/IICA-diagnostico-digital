@@ -26,16 +26,12 @@ function renderTab() {
   )
 }
 
-const pillByLabel = (label) =>
-  Array.from(document.querySelectorAll('.wizard-pill')).find((el) => el.textContent.includes(label))
-
 describe('TabNiveles (wizard)', () => {
-  it('arranca en el paso 1 con la pill correspondiente activa', () => {
+  it('arranca en el paso 1 mostrando el cuestionario y el botón "VER RESULTADOS"', () => {
     renderTab()
-    expect(pillByLabel('Completar cuestionario')).toHaveClass('active')
-    expect(pillByLabel('Ver resultados')).not.toHaveClass('active')
     expect(screen.getByRole('button', { name: /VER RESULTADOS/i })).toBeInTheDocument()
     expect(screen.queryByTestId('radar-mock')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Volver al cuestionario/i })).not.toBeInTheDocument()
   })
 
   it('renderiza la pregunta condicional 1.4 sólo si 1.3 >= 1', async () => {
@@ -55,8 +51,8 @@ describe('TabNiveles (wizard)', () => {
     await user.click(screen.getByRole('button', { name: /VER RESULTADOS/i }))
     expect(screen.getByTestId('radar-mock')).toBeInTheDocument()
     expect(screen.getByTestId('tabla-mock')).toBeInTheDocument()
-    expect(pillByLabel('Ver resultados')).toHaveClass('active')
     expect(screen.getByRole('button', { name: /Volver al cuestionario/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /VER RESULTADOS/i })).not.toBeInTheDocument()
   })
 
   it('"Volver al cuestionario" regresa al paso 1', async () => {
