@@ -57,9 +57,9 @@ export default function TabEmbudo() {
       <h2 className="text-2xl sm:text-3xl font-bold text-emerald-800 mb-4">Embudo de Puntos Críticos</h2>
 
       <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 sm:p-5 mb-6 sm:mb-8">
-        <h3 className="font-bold text-emerald-800 mb-1">Definiendo Prioridades</h3>
+        <h3 className="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
         <p className="text-emerald-900 text-sm">
-          El objetivo final del diagnóstico consiste en transformar el FODA en una lista breve y clara de 'puntos críticos' que requieren atención prioritaria. Valore cada problema y concéntrese en aquellas brechas de "Alto Impacto y Bajo Esfuerzo" que pueden generar victorias tempranas.
+          Este instrumento es una matriz de priorización (impacto vs. esfuerzo) que ayuda a filtrar las familias de problemas surgidas del FODA en una lista breve de puntos críticos donde concentrar el esfuerzo de transformación digital. Escriba cada problema prioritario, ajuste los controles de esfuerzo e impacto y agréguelo al gráfico. Concéntrese en las brechas del cuadrante superior izquierdo (alto impacto, bajo esfuerzo) que pueden generar victorias tempranas.
         </p>
       </div>
 

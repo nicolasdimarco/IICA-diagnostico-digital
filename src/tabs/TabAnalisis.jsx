@@ -154,6 +154,13 @@ export default function TabAnalisis() {
 
   return (
     <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-md border border-slate-200">
+      <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 sm:p-5 mb-6 sm:mb-8">
+        <h3 className="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
+        <p className="text-emerald-900 text-sm">
+          Este instrumento cualitativo recoge, en las palabras del propio equipo, los hallazgos que surgen de las entrevistas y observaciones sobre cuatro dimensiones del trabajo cotidiano de la cooperativa. Lea la descripción de cada bloque a la izquierda, converse con su equipo y registre en el muro de la derecha cada frase, idea o fricción detectada eligiendo el bloque correspondiente. Use el botón "Ver ejemplo" si necesita inspiración.
+        </p>
+      </div>
+
       <h3 className="text-xl sm:text-2xl font-bold text-emerald-800 mb-4">Guía de Análisis Cualitativo</h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">

@@ -19,9 +19,9 @@ export default function TabFoda() {
   return (
     <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-md border border-slate-200 space-y-6 sm:space-y-8 text-base">
       <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 sm:p-5 mb-4 sm:mb-8">
-        <h3 className="font-bold text-emerald-800 mb-1">Paso 1: Organice y Paso 2: Analice</h3>
+        <h3 className="font-bold text-emerald-800 mb-1">¿Qué es esto y cómo usarlo?</h3>
         <p className="text-emerald-900 text-sm">
-          Primero, organice sus hallazgos en los 4 cuadrantes del FODA. Luego, descienda a la sección de "Cruces Estratégicos" para agrupar problemas y oportunidades combinando factores (Ej: usar una Fortaleza para mitigar una Amenaza).
+          El FODA es una herramienta de síntesis estratégica que consolida los hallazgos cualitativos del paso anterior en cuatro cuadrantes (Fortalezas, Oportunidades, Debilidades y Amenazas) y los combina entre sí para identificar familias de problemas y oportunidades. Complete primero cada cuadrante trasladando los hallazgos más relevantes del muro y, a continuación, descienda a la sección "Cruces Estratégicos" para registrar al menos una estrategia o punto crítico por combinación (por ejemplo, usar una Fortaleza para mitigar una Amenaza).
         </p>
       </div>
 
