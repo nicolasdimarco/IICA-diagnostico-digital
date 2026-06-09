@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useDiagnostico } from '../../state/DiagnosticoContext.jsx'
 import { iniciativasPorTipo, generarStatementSmart } from './classify.js'
 
@@ -19,53 +20,85 @@ function validarSmart(s) {
   return { ok: faltantes.length === 0 && medibleOk && temporalOk, faltantes, medibleOk, temporalOk }
 }
 
-function FormularioSmart({ iniciativa, smart, onChange }) {
+function QuickWinItem({ iniciativa, smart, onChange, isOpen, onToggle }) {
   const v = validarSmart(smart)
   const statement = generarStatementSmart(smart)
+  const panelId = `qw-panel-${iniciativa.id}`
   return (
-    <div className="bg-white border-2 border-emerald-200 p-4 sm:p-6 space-y-4">
-      <div className="flex justify-between items-baseline gap-2">
-        <h3 className="font-black text-emerald-800 text-base sm:text-lg">{iniciativa.nombre}</h3>
-        <span className={`text-xs font-bold uppercase tracking-wider ${v.ok ? 'text-emerald-700' : 'text-amber-700'}`}>
-          {v.ok ? 'completo' : `faltan ${v.faltantes.length || (v.medibleOk ? 0 : 1)}`}
+    <div className="bg-white border-2 border-emerald-200">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        className="w-full flex items-center gap-3 p-4 sm:p-5 text-left hover:bg-emerald-50 transition"
+      >
+        <h3 className="font-black text-emerald-800 text-base sm:text-lg flex-1 min-w-0 truncate">
+          {iniciativa.nombre}
+        </h3>
+        <span
+          className={`inline-flex items-center px-3 py-1 text-xs font-black uppercase tracking-wider shrink-0 ${
+            v.ok
+              ? 'bg-emerald-600 text-white'
+              : 'bg-amber-100 text-amber-800 border border-amber-300'
+          }`}
+        >
+          {v.ok ? 'Completo' : 'Incompleto'}
         </span>
-      </div>
-      {iniciativa.descripcion && <p className="text-sm text-slate-600 italic">{iniciativa.descripcion}</p>}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`w-5 h-5 text-slate-500 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div id={panelId} className="border-t border-slate-200 p-4 sm:p-6 space-y-4">
+          {iniciativa.descripcion && <p className="text-sm text-slate-600 italic">{iniciativa.descripcion}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {CAMPOS_SMART.map((c) => {
-          const val = (smart && smart[c.key]) || ''
-          const requiereLongitud = c.key === 'medible'
-          const longitudOk = !requiereLongitud || val.trim().length >= REQ_MEDIBLE_MIN
-          return (
-            <div key={c.key}>
-              <div className="flex justify-between items-baseline gap-2 mb-1">
-                <label className="font-bold text-sm text-slate-800">{c.label}</label>
-                {requiereLongitud && (
-                  <span className={`text-xs tabular-nums ${longitudOk ? 'text-emerald-700' : 'text-slate-400'}`}>
-                    {val.trim().length} / {REQ_MEDIBLE_MIN}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 mb-1">{c.hint}</p>
-              <textarea
-                value={val}
-                onChange={(e) => onChange(iniciativa.id, c.key, e.target.value)}
-                rows={2}
-                placeholder={c.placeholder}
-                className="w-full border-2 border-slate-200 p-2 sm:p-3 text-base outline-emerald-500 resize-y"
-              />
-            </div>
-          )
-        })}
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {CAMPOS_SMART.map((c) => {
+              const val = (smart && smart[c.key]) || ''
+              const requiereLongitud = c.key === 'medible'
+              const longitudOk = !requiereLongitud || val.trim().length >= REQ_MEDIBLE_MIN
+              return (
+                <div key={c.key}>
+                  <div className="flex justify-between items-baseline gap-2 mb-1">
+                    <label className="font-bold text-sm text-slate-800">{c.label}</label>
+                    {requiereLongitud && (
+                      <span className={`text-xs tabular-nums ${longitudOk ? 'text-emerald-700' : 'text-slate-400'}`}>
+                        {val.trim().length} / {REQ_MEDIBLE_MIN}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 mb-1">{c.hint}</p>
+                  <textarea
+                    value={val}
+                    onChange={(e) => onChange(iniciativa.id, c.key, e.target.value)}
+                    rows={2}
+                    placeholder={c.placeholder}
+                    className="w-full border-2 border-slate-200 p-2 sm:p-3 text-base outline-emerald-500 resize-y"
+                  />
+                </div>
+              )
+            })}
+          </div>
 
-      <div className="p-3 sm:p-4 bg-slate-50 border border-slate-200">
-        <h4 className="font-black text-slate-700 text-xs uppercase tracking-wider mb-2">Objetivo SMART consolidado</h4>
-        <p className="text-slate-800 italic min-h-[2.5rem]">
-          {statement || <span className="text-slate-400">Complete los campos para ver el objetivo consolidado.</span>}
-        </p>
-      </div>
+          <div className="p-3 sm:p-4 bg-slate-50 border border-slate-200">
+            <h4 className="font-black text-slate-700 text-xs uppercase tracking-wider mb-2">Objetivo SMART consolidado</h4>
+            <p className="text-slate-800 italic min-h-[2.5rem]">
+              {statement || <span className="text-slate-400">Complete los campos para ver el objetivo consolidado.</span>}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -73,8 +106,17 @@ function FormularioSmart({ iniciativa, smart, onChange }) {
 export default function StepSmart() {
   const { modulo2 } = useDiagnostico()
   const { iniciativas, smart, setSmartCampo } = modulo2
+  const [openIds, setOpenIds] = useState(() => new Set())
 
   const quickWins = iniciativasPorTipo(iniciativas, 'quick_win')
+
+  const toggle = (id) =>
+    setOpenIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
 
   return (
     <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-md border border-slate-200 space-y-6">
@@ -91,13 +133,15 @@ export default function StepSmart() {
           Todavía no hay iniciativas clasificadas como Quick Win. Vuelva al paso anterior y ajuste impacto/esfuerzo de al menos una iniciativa para activarla acá (impacto ≥ 4 y esfuerzo ≤ 3).
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-3 sm:space-y-4">
           {quickWins.map((it) => (
-            <FormularioSmart
+            <QuickWinItem
               key={it.id}
               iniciativa={it}
               smart={smart[it.id]}
               onChange={setSmartCampo}
+              isOpen={openIds.has(it.id)}
+              onToggle={() => toggle(it.id)}
             />
           ))}
         </div>
